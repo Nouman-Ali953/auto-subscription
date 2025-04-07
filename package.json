@@ -9,5 +9,8 @@
   },
   "scripts": {
     "start": "node api/puppeteer.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
