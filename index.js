@@ -52,13 +52,11 @@
 //     console.log(`Server running on http://localhost:${port}`);
 // });
 
-
 const chromium = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
 
 module.exports = async (req, res) => {
   let browser = null;
-
   try {
     browser = await puppeteer.launch({
       args: chromium.args,
@@ -67,16 +65,16 @@ module.exports = async (req, res) => {
     });
 
     const page = await browser.newPage();
-    await page.goto("https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01", { waitUntil: 'networkidle2' });
+    await page.goto('https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01', { waitUntil: 'networkidle2' });
+    
+    // Do your clicks, forms, scraping, etc.
 
-    // ... your waitForXPath, click, etc.
-
-    res.status(200).send("Automation completed successfully!");
-  } catch (err) {
-    console.error("Error automating clicks:", err.message);
-    res.status(500).send("Error: " + err.message);
+    res.status(200).send('Automation complete!');
+  } catch (error) {
+    console.error('Error launching Puppeteer:', error);
+    res.status(500).send('Something went wrong');
   } finally {
-    if (browser !== null) {
+    if (browser) {
       await browser.close();
     }
   }
