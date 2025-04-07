@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
   let browser = null;
 
   try {
-    const executablePath = chromium.executablePath(); // ✅ fix here
+    const executablePath = await chromium.executablePath(); // ✅ fix here
 
     browser = await puppeteer.launch({
       args: chromium.args,
