@@ -63,42 +63,86 @@
 
 
 
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
 
-(async () => {
-  const browser = await puppeteer.launch({
-    headless: false, // set to true to run headlessly
-    defaultViewport: null,
-  });
+// (async () => {
+//   const browser = await puppeteer.launch({
+//     headless: false, // set to true to run headlessly
+//     defaultViewport: null,
+//   });
 
-  const page = await browser.newPage();
+//   const page = await browser.newPage();
 
-  // Navigate to the target page
-  await page.goto('https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01', { waitUntil: 'networkidle2' });
+//   // Navigate to the target page
+//   await page.goto('https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01', { waitUntil: 'networkidle2' });
+
+//   try {
+//     // Wait for and click the button with text "Apply for service"
+//     await page.waitForXPath("//button[contains(text(), 'Apply for service')]", { timeout: 10000 });
+//     const [applyButton] = await page.$x("//button[contains(text(), 'Apply for service')]");
+//     if (applyButton) {
+//       await applyButton.click();
+//       console.log("✅ Clicked 'Apply for service'");
+//     }
+
+//     // Wait for navigation and then interact with new buttons
+//     await page.waitForNavigation({ waitUntil: 'networkidle0' });
+    
+//     // Wait and click the button with text "Agree"
+//     await page.waitForXPath("//button[contains(text(), 'Agree')]", { timeout: 10000 });
+//     const [agreeButton] = await page.$x("//button[contains(text(), 'Agree')]");
+//     if (agreeButton) {
+//       await agreeButton.click();
+//       console.log("✅ Clicked 'Agree'");
+//     }
+//   } catch (err) {
+//     console.error("⚠️ Error automating clicks:", err.message);
+//   }
+
+//   // Keep the browser open for observation
+//   // await browser.close(); // Uncomment to auto-close when done
+// })();
+
+
+const express = require('express');
+const chromium = require('chrome-aws-lambda');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', async (req, res) => {
+  let browser = null;
 
   try {
-    // Wait for and click the button with text "Apply for service"
-    await page.waitForXPath("//button[contains(text(), 'Apply for service')]", { timeout: 10000 });
-    const [applyButton] = await page.$x("//button[contains(text(), 'Apply for service')]");
-    if (applyButton) {
-      await applyButton.click();
-      console.log("✅ Clicked 'Apply for service'");
+    browser = await chromium.puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+    });
+
+    const page = await browser.newPage();
+    await page.goto('https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01', { waitUntil: 'networkidle2' });
+
+    // Your Puppeteer code here, e.g., clicking a button
+    // Here is a sample of how to click a button by its text
+    const [button] = await page.$x("//button[contains(., 'Apply for service')]");
+    if (button) {
+      await button.click();
     }
 
-    // Wait for navigation and then interact with new buttons
-    await page.waitForNavigation({ waitUntil: 'networkidle0' });
-    
-    // Wait and click the button with text "Agree"
-    await page.waitForXPath("//button[contains(text(), 'Agree')]", { timeout: 10000 });
-    const [agreeButton] = await page.$x("//button[contains(text(), 'Agree')]");
-    if (agreeButton) {
-      await agreeButton.click();
-      console.log("✅ Clicked 'Agree'");
+    // Capture some result, like page title
+    const title = await page.title();
+    res.send(`Page title is: ${title}`);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send(`Error running Puppeteer script: ${error.message}`);
+  } finally {
+    if (browser) {
+      await browser.close();
     }
-  } catch (err) {
-    console.error("⚠️ Error automating clicks:", err.message);
   }
+});
 
-  // Keep the browser open for observation
-  // await browser.close(); // Uncomment to auto-close when done
-})();
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});

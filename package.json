@@ -1,16 +1,14 @@
 {
-  "name": "automated-script",
+  "name": "puppeteer-express-app",
   "version": "1.0.0",
-  "main": "api/puppeteer.js",
+  "main": "index.js",
   "license": "ISC",
-  "dependencies": {
-    "chrome-aws-lambda": "^14.1.0",
-    "puppeteer-core": "^24.6.0"
-  },
   "scripts": {
-    "start": "node api/puppeteer.js"
+    "start": "node index.js"
   },
-  "engines": {
-    "node": ">=14.0.0"
+  "dependencies": {
+    "express": "^4.17.1",
+    "puppeteer-core": "^24.6.0",
+    "chrome-aws-lambda": "^14.1.0"
   }
 }
