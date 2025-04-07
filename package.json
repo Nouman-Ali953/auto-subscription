@@ -1,17 +1,13 @@
 {
   "name": "automated-script",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
+  "main": "api/puppeteer.js",
   "license": "ISC",
-  "type": "commonjs",
-  "description": "",
   "dependencies": {
-    "puppeteer": "^24.6.0"
+    "chrome-aws-lambda": "^14.1.0",
+    "puppeteer-core": "^24.6.0"
+  },
+  "scripts": {
+    "start": "node api/puppeteer.js"
   }
 }

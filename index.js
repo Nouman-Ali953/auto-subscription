@@ -1,3 +1,21 @@
+// {
+//   "name": "automated-script",
+//   "version": "1.0.0",
+//   "main": "index.js",
+//   "scripts": {
+//     "start": "node index.js",
+//     "test": "echo \"Error: no test specified\" && exit 1"
+//   },
+//   "keywords": [],
+//   "author": "",
+//   "license": "ISC",
+//   "type": "commonjs",
+//   "description": "",
+//   "dependencies": {
+//     "puppeteer": "^24.6.0"
+//   }
+// }
+
 // const puppeteer = require('puppeteer');
 
 // (async () => {
