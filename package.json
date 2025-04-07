@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Nouman-Ali953/auto-subscription#readme",
   "description": "",
   "dependencies": {
+    "chrome-aws-lambda": "^10.1.0",
     "express": "^5.1.0",
     "puppeteer": "^24.6.0"
   }
