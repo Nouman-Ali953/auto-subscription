@@ -1,76 +1,65 @@
-// import { createRequire } from 'module';
-// const require = createRequire(import.meta.url);
+const chromium = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
-// Puppeteer Extras
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-
-// Pull the full puppeteer executablePath:
-const { executablePath } = require('puppeteer');
-
-// Use the stealth plugin:
-puppeteer.use(StealthPlugin());
-
-// export default async function handler(req, res) {
- async function handler(req, res) {
-  let browser;
+module.exports = async (req, res) => {
+  let browser = null;
   try {
-    // Launch Puppeteer with an explicit path to the Chromium
+    // 1. Launch puppeteer-core with a serverless-compatible Chromium
     browser = await puppeteer.launch({
-      headless: false,            // Change to `true` if you want to hide the browser UI
-      ignoreHTTPSErrors: true,
-      args: ['--no-sandbox'],
-      executablePath: executablePath(), // <--- Key difference here
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless, 
     });
 
     const page = await browser.newPage();
-    await page.setViewport({ width: 1920, height: 1280, deviceScaleFactor: 1 });
 
-    // Go to your target page
+    // 2. Go to your desired page
     await page.goto('https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01', {
-      waitUntil: 'networkidle2',
+      waitUntil: 'networkidle2'
     });
 
-    // Wait for and click "Apply for service"
-    await page.waitForXPath("//button[contains(text(), 'Apply for service')]", { timeout: 10000 });
+    // 3. Wait for the "Apply for service" button via a DOM function
+    await page.waitForFunction(() => {
+      const xp = "//button[contains(text(), 'Apply for service')]";
+      return document.evaluate(
+        xp, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+      ).singleNodeValue;
+    }, { timeout: 10000 });
+
+    // 4. Now select it using $x() and click
     const [applyButton] = await page.$x("//button[contains(text(), 'Apply for service')]");
     if (applyButton) {
       await applyButton.click();
       console.log("✅ Clicked 'Apply for service'");
     }
 
-    // Wait for next navigation
+    // 5. Wait for navigation
     await page.waitForNavigation({ waitUntil: 'networkidle0' });
 
-    // Wait for and click "agree"
-    await page.waitForXPath("//button[contains(text(), 'agree')]", { timeout: 10000 });
+    // 6. Wait for the "agree" button
+    await page.waitForFunction(() => {
+      const xp = "//button[contains(text(), 'agree')]";
+      return document.evaluate(
+        xp, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+      ).singleNodeValue;
+    }, { timeout: 10000 });
+
+    // 7. Click "agree"
     const [agreeButton] = await page.$x("//button[contains(text(), 'agree')]");
     if (agreeButton) {
       await agreeButton.click();
       console.log("✅ Clicked 'Agree'");
     }
 
-    // Done
-    res.status(200).send('Automation completed successfully!');
-  } catch (error) {
-    console.error('⚠️ Error automating clicks:', error.message);
-    res.status(500).send('Error during automation: ' + error.message);
+    // 8. Done
+    return res.status(200).send("Automation completed successfully!");
+  } catch (err) {
+    console.error("⚠️ Error automating clicks:", err.message);
+    return res.status(500).send("Error during automation: " + err.message);
   } finally {
     if (browser) {
       await browser.close();
     }
   }
-}
-
-// If you're running locally (e.g., `node automation.js`), you might test the function like this:
-if (require.main === module) {
-  // Simulate a local call:
-  handler(
-    { /* mock request */ }, 
-    { 
-      status: (code) => ({
-        send: (msg) => console.log(`Status ${code}: ${msg}`)
-      })
-    }
-  );
-}
+};
