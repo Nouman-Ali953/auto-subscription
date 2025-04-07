@@ -6,15 +6,15 @@ const chromium = require('@sparticuz/chromium');
 const puppeteer = require('puppeteer-core');
 
 module.exports = async (req, res) => {
-  let browser = null;
-  try {
-    browser = await puppeteer.launch({
-      // Use @sparticuz/chromium to get an appropriate executable for Vercel
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
-      args: chromium.args,
-    });
-
+    let browser;
+  
+    try {
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath, // <-- Use `await` here!
+        headless: chromium.headless,                  // or 'new' / true
+      });
     const page = await browser.newPage();
     await page.goto(
       'https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01',
