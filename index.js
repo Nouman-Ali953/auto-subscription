@@ -47,6 +47,9 @@ const puppeteer = require('puppeteer');
 const app = express();
 const port = 3000;
 
+app.get('/',async(req,res)=>{
+    res.send("hello form the server")
+})
 app.get('/trigger', async (req, res) => {
     const browser = await puppeteer.launch({
         headless: false, // set to true to run headlessly
