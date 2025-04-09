@@ -23,7 +23,7 @@ app.get("/trigger", async (req, res) => {
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/google-chrome', 
     // It's typical to run headless in Docker
-    headless: false, 
+    headless: true, 
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox'
