@@ -79,7 +79,7 @@ app.get("/", (req, res) => {
 app.get("/scrape", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
@@ -89,7 +89,7 @@ app.get("/scrape", async (req, res) => {
 
     await page.type(".devsite-search-field", "automate beyond recorder");
 
-    await page.waitForSelector(".devsite-result-item-link", { timeout: 10000 });
+    await page.waitForSelector(".devsite-result-item-link", { timeout: 20000 });
     await page.click(".devsite-result-item-link");
 
     await page.waitForSelector("h1");

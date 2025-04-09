@@ -1,9 +1,9 @@
 {
   "name": "automated-script",
   "version": "1.0.0",
-  "main": "api/trigger.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node api/trigger.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
