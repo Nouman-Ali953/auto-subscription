@@ -80,6 +80,8 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   puppeteer = require("puppeteer");
 }
 
+app.get("/", async (req, res) => { res.send("hello from server")})  
+
 app.get("/api", async (req, res) => {
   let options = {};
 
