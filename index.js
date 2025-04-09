@@ -88,8 +88,8 @@ app.get("/api", async (req, res) => {
       args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
       defaultViewport: chrome.defaultViewport,
       executablePath: await chrome.executablePath,
-      // headless: true,
-      headless: false,
+      headless: true,
+      // headless: false,
       ignoreHTTPSErrors: true,
     };
   }
@@ -103,7 +103,7 @@ app.get("/api", async (req, res) => {
 
     await page.type(".devsite-search-field", "automate beyond recorder");
 
-    await page.waitForSelector(".devsite-result-item-link", { timeout: 20000 });
+    await page.waitForSelector(".devsite-result-item-link", { timeout: 30000 });
     await page.click(".devsite-result-item-link");
 
     await page.waitForSelector("h1");
