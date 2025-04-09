@@ -21,7 +21,7 @@ app.get("/trigger", async (req, res) => {
 
   // Use the environment variable we defined in Dockerfile
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser', 
+    executablePath: '/usr/bin/google-chrome', 
     // It's typical to run headless in Docker
     headless: false, 
     args: [
