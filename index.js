@@ -65,25 +65,39 @@
 //   console.log(`Server running on http://localhost:${port}`);
 // });
 
-// server.js
-const express = require("express");
-const puppeteer = require("puppeteer"); // or puppeteer-core + remote chromium
 
-const app = express();
-const port = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send("👋 Hello from Puppeteer Express App!");
-});
 
-app.get("/scrape", async (req, res) => {
-  try {
-    const browser = await puppeteer.launch({
+const app = require("express")();
+
+let chrome = {};
+let puppeteer;
+
+if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+  chrome = require("chrome-aws-lambda");
+  puppeteer = require("puppeteer-core");
+} else {
+  puppeteer = require("puppeteer");
+}
+
+app.get("/api", async (req, res) => {
+  let options = {};
+
+  if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+    options = {
+      args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+      defaultViewport: chrome.defaultViewport,
+      executablePath: await chrome.executablePath,
+      // headless: true,
       headless: false,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-    const page = await browser.newPage();
+      ignoreHTTPSErrors: true,
+    };
+  }
 
+  try {
+    let browser = await puppeteer.launch(options);
+
+    let page = await browser.newPage();
     await page.goto("https://developer.chrome.com/");
     await page.setViewport({ width: 1080, height: 1024 });
 
@@ -100,15 +114,18 @@ app.get("/scrape", async (req, res) => {
     });
 
     await browser.close();
-
-    console.log(`✅ Blog Title: ${fullTitle}`);
-    res.send(`✅ The title of this blog post is: "${fullTitle}"`);
+    res.send(await fullTitle);
   } catch (err) {
-    console.error("⚠️ Error scraping:", err.message);
-    res.status(500).send("Error during scraping: " + err.message);
+    console.error(err);
+    return null;
   }
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server started");
 });
+
+module.exports = app;
+
+
+    
