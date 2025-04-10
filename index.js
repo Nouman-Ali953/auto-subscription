@@ -8,6 +8,7 @@ app.get("/", async (req, res) => {
   res.send("hello form the server");
 });
 
+//comment here
 app.get("/trigger", async (req, res) => {
   // const browser = await puppeteer.launch({
   //   executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, 
