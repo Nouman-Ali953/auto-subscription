@@ -21,14 +21,15 @@ app.get("/trigger", async (req, res) => {
 
   // Use the environment variable we defined in Dockerfile
   const browser = await puppeteer.launch({
+    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, 
     executablePath: '/usr/bin/google-chrome', 
     // It's typical to run headless in Docker
-    headless: true, 
+    headless: false, 
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox'
     ],
-  });
+  });  
   const page = await browser.newPage();
 
   // Navigate to the target page
@@ -39,17 +40,31 @@ app.get("/trigger", async (req, res) => {
 
   try {
     // Wait for and click the button with text "Apply for service"
+    // await page.waitForSelector("button.click-img", { timeout: 20000 });
+    // await page.click("button.click-img");
+    // console.log("✅ Clicked the first button");
+
+    // // Wait for the page to navigate
+    // await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+    // // Second button (from the second screenshot)
+    // await page.waitForSelector("#submitOTP", { timeout: 20000 });
+    // await page.click("#submitOTP");
+    // console.log("✅ Clicked the second button");
+
+    await page.screenshot({ path: "step1-page-loaded.png" });
+    
     await page.waitForSelector("button.click-img", { timeout: 20000 });
     await page.click("button.click-img");
     console.log("✅ Clicked the first button");
-
-    // Wait for the page to navigate
+    await page.screenshot({ path: "step2-first-click.png" });
+    
     await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-    // Second button (from the second screenshot)
+    
     await page.waitForSelector("#submitOTP", { timeout: 20000 });
     await page.click("#submitOTP");
     console.log("✅ Clicked the second button");
+    await page.screenshot({ path: "step3-second-click.png" });
 
     res.send("Automation completed successfully!");
   } catch (err) {
@@ -63,6 +78,7 @@ app.get("/trigger", async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
+  // console.log(`Server running on http://localhost:${port}`);
 });
 
 
