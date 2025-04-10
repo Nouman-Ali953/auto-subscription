@@ -57,18 +57,39 @@ app.get("/trigger", async (req, res) => {
     console.log("✅ Clicked the first button");
     await page.screenshot({ path: "step2-first-click.png" });
 
-    await page.waitForNavigation({ waitUntil: "networkidle0" });
+    // await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-    // await page.waitForSelector("#submitOTP", { timeout: 20000 });
+    // // await page.waitForSelector("#submitOTP", { timeout: 20000 });
+    // // await page.click("#submitOTP");
+    // await page.waitForSelector("#submitOTP", { timeout: 20000, visible: true });
+    // await page.waitForTimeout(500); // just to be safe
     // await page.click("#submitOTP");
-    await page.waitForSelector("#submitOTP", { timeout: 20000, visible: true });
-    await page.waitForTimeout(500); // just to be safe
-    await page.click("#submitOTP");
 
-    console.log("✅ Clicked the second button");
-    await page.screenshot({ path: "step3-second-click.png" });
+    // console.log("✅ Clicked the second button");
+    // await page.screenshot({ path: "step3-second-click.png" });
 
-    res.send("Automation completed successfully!");
+    // res.send("Automation completed successfully!");
+    
+    await page.click("button.click-img");
+    console.log("✅ Clicked the first button");
+await page.screenshot({ path: "step2-first-click.png" });
+
+// Wait for the second button or content to appear
+try {
+  await page.waitForSelector("#submitOTP", {
+    timeout: 20000,
+    visible: true,
+  });
+  await page.waitForTimeout(1000); // small buffer just in case
+  await page.screenshot({ path: "step2.5-before-second-click.png" });
+  await page.click("#submitOTP");
+  console.log("✅ Clicked the second button");
+  await page.screenshot({ path: "step3-second-click.png" });
+  res.send("Automation completed successfully!");
+} catch (err) {
+  console.error("⚠️ Second button not found:", err.message);
+}
+
   } catch (err) {
     console.error("⚠️ Error automating clicks:", err.message);
     res.status(500).send("Error during automation: " + err.message);
