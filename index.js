@@ -11,7 +11,7 @@ app.get("/", async (req, res) => {
 //comment here
 app.get("/trigger", async (req, res) => {
   // const browser = await puppeteer.launch({
-  //   executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, 
+  //   executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
   //   headless: true, // set to true to run headlessly
   //   args: [
   //     '--no-sandbox',
@@ -22,15 +22,12 @@ app.get("/trigger", async (req, res) => {
 
   // Use the environment variable we defined in Dockerfile
   const browser = await puppeteer.launch({
-    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, 
-    executablePath: '/usr/bin/google-chrome', 
+    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+    executablePath: "/usr/bin/google-chrome",
     // It's typical to run headless in Docker
-    headless: false, 
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox'
-    ],
-  });  
+    headless: false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
 
   // Navigate to the target page
@@ -54,16 +51,20 @@ app.get("/trigger", async (req, res) => {
     // console.log("✅ Clicked the second button");
 
     await page.screenshot({ path: "step1-page-loaded.png" });
-    
+
     await page.waitForSelector("button.click-img", { timeout: 20000 });
     await page.click("button.click-img");
     console.log("✅ Clicked the first button");
     await page.screenshot({ path: "step2-first-click.png" });
-    
+
     await page.waitForNavigation({ waitUntil: "networkidle0" });
-    
-    await page.waitForSelector("#submitOTP", { timeout: 20000 });
+
+    // await page.waitForSelector("#submitOTP", { timeout: 20000 });
+    // await page.click("#submitOTP");
+    await page.waitForSelector("#submitOTP", { timeout: 20000, visible: true });
+    await page.waitForTimeout(500); // just to be safe
     await page.click("#submitOTP");
+
     console.log("✅ Clicked the second button");
     await page.screenshot({ path: "step3-second-click.png" });
 
@@ -81,6 +82,3 @@ app.listen(port, () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
   // console.log(`Server running on http://localhost:${port}`);
 });
-
-
-
