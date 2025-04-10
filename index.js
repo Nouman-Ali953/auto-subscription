@@ -131,8 +131,8 @@ app.get("/trigger", async (req, res) => {
 
   // Use the environment variable we defined in Dockerfile
   const browser = await puppeteer.launch({
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-    // executablePath: "/usr/bin/google-chrome",
+    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+    executablePath: "/usr/bin/google-chrome",
     // It's typical to run headless in Docker
     headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -205,7 +205,7 @@ app.get("/trigger", async (req, res) => {
   await browser.close();
 });
 
-app.listen(port, () => {
-  // console.log(`Server running on http://0.0.0.0:${port}`);
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(port, () => {  
+  console.log(`Server running on http://0.0.0.0:${port}`);
+  // console.log(`Server running on http://localhost:${port}`);
 });
