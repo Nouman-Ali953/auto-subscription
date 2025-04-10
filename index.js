@@ -134,7 +134,7 @@ app.get("/trigger", async (req, res) => {
     // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     executablePath: "/usr/bin/google-chrome",
     // It's typical to run headless in Docker
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
