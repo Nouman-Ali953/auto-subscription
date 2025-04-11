@@ -6,20 +6,9 @@ const port = 3000;
 
 app.get("/", async (req, res) => {
   res.send("hello form the server");
-});
+});  
 
-//comment here
 app.get("/trigger", async (req, res) => {
-  // const browser = await puppeteer.launch({
-  //   executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-  //   headless: true, // set to true to run headlessly
-  //   args: [
-  //     '--no-sandbox',
-  //     '--disable-setuid-sandbox'
-  //   ],
-  //   defaultViewport: null,
-  // });
-
   // Use the environment variable we defined in Dockerfile
   const browser = await puppeteer.launch({
     // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
@@ -35,28 +24,15 @@ app.get("/trigger", async (req, res) => {
     "https://tracking.bigfunzones.com/api?svkey=4236006&telco_id=2&sub=01",
     { waitUntil: "networkidle2" }
   );
-
+        
   try {
-    // Wait for and click the button with text "Apply for service"
-    // await page.waitForSelector("button.click-img", { timeout: 20000 });
-    // await page.click("button.click-img");
-    // console.log("✅ Clicked the first button");
-
-    // // Wait for the page to navigate
-    // await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-    // // Second button (from the second screenshot)
-    // await page.waitForSelector("#submitOTP", { timeout: 20000 });
-    // await page.click("#submitOTP");
-    // console.log("✅ Clicked the second button");
-
     await page.screenshot({ path: "step1-page-loaded.png" });
-    
+
     await page.waitForSelector("button.click-img", { timeout: 20000 });
     await page.click("button.click-img");
     console.log("✅ Clicked the first button");
     await page.screenshot({ path: "step2-first-click.png" });
-    
+
     await page.waitForNavigation({ waitUntil: "networkidle0" });
     await page.screenshot({ path: "step3-page-loaded.png" });
 
